@@ -44,12 +44,12 @@ func Init(configPath string) (Config, error) {
 }
 
 func validate(d *Desc) (err error) {
-{{range .}}if d.{{.Name}} == {{if eq .Ptype "string"}} "" {{else}} 0 {{end}} {
+{{range .}}{{if ne .Ptype "bool"}}if d.{{.Name}} == {{if eq .Ptype "string"}} "" {{else}} 0 {{end}} {
 		return errors.Wrapf(err, "%q missing", "{{.NameSnake}}")
 	}
-{{end}}return nil
+{{end}}{{end}}return nil
 }
 `
 
-const CfgTmplContent = `{{range .}}{{.NameSnake}}={{if eq .Ptype "string"}}""{{else}}0{{end}}
+const CfgTmplContent = `{{range .}}{{.NameSnake}} = {{if eq .Ptype "string"}}""{{else if eq .Ptype "bool"}}false{{else}}0{{end}}
 {{end}}`

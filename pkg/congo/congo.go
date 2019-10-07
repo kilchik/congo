@@ -52,11 +52,13 @@ func TraverseParams(root *ast.File) ([]*ParamDesc, error) {
 }
 
 func RenderTemplate(tmplName, tmplContent, dstPath string, params []*ParamDesc, runFmt, append bool) error {
-	openMode := os.O_CREATE | os.O_WRONLY
+	openMode := os.O_WRONLY
 	if append {
-		openMode = os.O_APPEND
+		openMode |= os.O_APPEND
+	} else {
+		openMode |= os.O_CREATE
 	}
-	
+
 	dstFile, err := os.OpenFile(dstPath, openMode, 0644)
 	if err != nil {
 		return errors.Wrap(err,"create init.go file")
