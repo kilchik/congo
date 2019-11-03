@@ -17,9 +17,14 @@ type Config interface {
 	{{end}}
 }
 
+type descToml struct {
 {{range .}}
-func (d *Desc) Get{{.NameCamel}}() {{.Ptype}} {
-	return d.{{.Name}}
+	{{.NameCamel}}  {{.Ptype}} ` + "`" + `toml:"{{.NameSnake}}"` + "`" + `{{end}}
+}
+
+{{range .}}
+func (d *descToml) Get{{.NameCamel}}() {{.Ptype}} {
+	return d.{{.NameCamel}}
 }
 {{end}}
 
@@ -33,7 +38,7 @@ func Init(configPath string) (Config, error) {
 	if err != nil {
 		return nil, errors.Wrapf(err, "read config file content")
 	}
-	c := &Desc{}
+	c := &descToml{}
 	if _, err := toml.Decode(string(content), c); err != nil {
 		return nil, errors.Wrapf(err, "decode config file content")
 	}
@@ -43,8 +48,8 @@ func Init(configPath string) (Config, error) {
 	return c, nil
 }
 
-func validate(d *Desc) (err error) {
-{{range .}}{{if ne .Ptype "bool"}}if d.{{.Name}} == {{if eq .Ptype "string"}} "" {{else}} 0 {{end}} {
+func validate(d *descToml) (err error) {
+{{range .}}{{if ne .Ptype "bool"}}if d.{{.NameCamel}} == {{if eq .Ptype "string"}} "" {{else}} 0 {{end}} {
 		return errors.Wrapf(err, "%q missing", "{{.NameSnake}}")
 	}
 {{end}}{{end}}return nil

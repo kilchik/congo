@@ -10,5 +10,6 @@ There are some assumptions your project should satisfy to use this tool:
 Supported parameter types:
 - strings
 - integers
+- boolean
 
 To generate files for your project just add comment string ```//go:generate congo``` to the top of `config.go` and run `go generate ./...` from the root.
